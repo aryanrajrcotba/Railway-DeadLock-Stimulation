@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Railway Deadlock Simulation</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-image: url('https://pixabay.com/photos/railroad-tracks-rails-train-track-2165844/'); 
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            margin: 0;
+            padding: 0;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 50px auto; 
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+        h1 { 
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        label {
+            font-size: 1.2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: none;
+            width: 100%;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        input {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #218838;
+            transform: scale(1.02);
+        }
+        button:focus {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 1.1em;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            border-radius: 5px;
+            display: none; /* Hidden initially, will be shown dynamically */
+        }
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            input, button {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Railway Deadlock Simulation</h1>
+        <form id="railwayForm" action="/cgi-bin/logic.cgi" method="GET" aria-label="Railway Simulation Form" role="form">
+            <label for="trainNumber">🚂 Enter number of trains:</label>
+            <input type="number" id="trainNumber" name="trainNumber" placeholder="Enter the number of trains" min="1" max="10" required><br>
+
+            <label for="trackNumber">🛤️ Enter number of tracks:</label>
+            <input type="number" id="trackNumber" name="trackNumber" placeholder="Enter the number of tracks" min="1" max="10" required><br>
+
+            <button type="submit" aria-label="Simulate Railway Deadlock">Simulate</button>
+        </form>
+        
+        <!-- Output section to show the result after simulation -->
+        <div id="output" class="output" aria-live="polite"></div>
+    </div>
+
+    <script>
+        document.getElementById('railwayForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const trainNumber = form.trainNumber.value;
+            const trackNumber = form.trackNumber.value;
+            const outputDiv = document.getElementById('output');
+
+            // Fetch the CGI response and display it
+            fetch(`/cgi-bin/logic.cgi?trainNumber=${trainNumber}&trackNumber=${trackNumber}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Network response was not ok.");
+                    return response.text();
+                })
+                .then(html => {
+                    // Display the response in the output div
+                    outputDiv.innerHTML = html;
+                    outputDiv.style.display = 'block';
+                })
+                .catch(error => {
+                    outputDiv.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+                    outputDiv.style.display = 'block';
+                });
+        });
+    </script>
+</body>
+</html>
